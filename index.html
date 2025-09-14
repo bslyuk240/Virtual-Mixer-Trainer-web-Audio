@@ -233,7 +233,8 @@
     { id:'drums',   label:'Drums' },
     { id:'sax',     label:'Saxophone 🎷' },
   ];
-  const state = { channels:{} };
+  // was: const state = { channels:{} };
+const state = { channels: {}, transportPlaying: false };
 
   function createChannel(def, index){
     const strip=document.createElement('div');
@@ -319,10 +320,22 @@
       delayMix:strip.querySelector('[data-role=delayMix]'),
     };
 
-    ui.file.addEventListener('change', e=>{
-      const file=e.target.files?.[0]; if(!file) return;
-      const url=URL.createObjectURL(file); media.src=url; media.play().catch(()=>{}); ctx.resume();
-    });
+    ui.file.addEventListener('change', e => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  media.autoplay = false;            // ensure no auto-play
+  media.src = url;
+
+  if (state.transportPlaying) {
+    // If transport is already running, join playback
+    media.play().catch(()=>{});
+  } else {
+    // Stay stopped until user hits Play All
+    media.pause();
+    try { media.currentTime = 0; } catch(_) {}
+  }
+});
     ui.trim.addEventListener('input', ()=> preGain.gain.value=parseFloat(ui.trim.value));
     ui.hpfToggle.addEventListener('change', ()=>{ hpf.frequency.value = ui.hpfToggle.checked ? parseFloat(ui.hpfFreq.value) : 20; });
     ui.hpfFreq.addEventListener('input', ()=>{ if(ui.hpfToggle.checked) hpf.frequency.value=parseFloat(ui.hpfFreq.value); });
@@ -467,16 +480,17 @@ ch.ui.solo.addEventListener('click', ()=>{
 const pauseAll = document.getElementById('pauseAll');
 
 playAll.onclick = () => {
+  state.transportPlaying = true;
   ctx.resume();
   for (const ch of Object.values(state.channels)) {
-    if (ch.media.src) { ch.media.play().catch(()=>{}); }
+    if (ch.media.src) ch.media.play().catch(()=>{});
   }
 };
 
 pauseAll.onclick = () => {
-  for (const ch of Object.values(state.channels)) {
-    ch.media.pause();
-  }
+  state.transportPlaying = false;
+  for (const ch of Object.values(state.channels)) ch.media.pause();
+}
 };
   </script>
 </body>
