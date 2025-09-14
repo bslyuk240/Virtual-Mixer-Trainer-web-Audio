@@ -76,47 +76,58 @@
     .info .note{font-size:13px;color:var(--muted)}
     .info ul{margin:.4rem 0 0 1rem}
     .info li{font-size:13px;color:var(--muted);margin:.25rem 0}
-  /* --- Make label width flexible per-row, let slider fill the rest --- */
+  /* =========================
+   FLEX-LABEL / LONG-SLIDER LAYOUT
+   (paste at the END of your <style>)
+   ========================= */
+
+/* Row layout */
 .row{
   display:flex;
   align-items:center;
   gap:8px;
 }
 
-/* Label takes just what it needs (wrap to 2 lines max), not a fixed column */
+/* Labels: no fixed column — wrap up to 2 lines, then cut;
+   sliders will take the remaining width */
 .row label{
-  flex:0 1 120px;          /* can shrink/grow up to ~120px */
-  max-width:120px;         /* cap so long labels wrap; adjust to taste (100–140px) */
+  width:auto !important;
+  min-width:0 !important;
+  flex:0 1 128px;          /* can grow/shrink up to ~128px */
+  max-width:128px;         /* longer texts wrap to 2 lines */
   white-space:normal;      /* allow wrapping */
   line-height:1.1;
   font-size:11px;
   color:var(--muted);
 
-  /* clamp to two lines for tidy rows */
+  /* neat 2-line clamp (WebKit); harmless elsewhere */
   display:-webkit-box;
-  -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
+  -webkit-line-clamp:2;
   overflow:hidden;
 }
 
-/* Slider grows to fill whatever space remains on that row */
+/* Slider: fill all remaining space on the row */
 .row input[type="range"]{
   flex:1 1 auto;
-  min-width:0;             /* important so it can shrink if needed */
+  min-width:0;             /* critical so it can shrink on narrow screens */
 }
 
-/* Keep small inline bits (like “Enable” + checkbox) compact */
+/* Keep tiny inline bits compact and on one line */
 .row .small{ white-space:nowrap; }
 
-/* File input row still compact so it doesn't eat space */
+/* File input stays short so it doesn’t steal width */
 .row.inline input[type="file"]{
   max-width:140px;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 
-/* Optional: tighten padding slightly so more room goes to controls */
-.strip{padding:10px;}
-.section{padding:10px;}
+/* Slightly tighter padding so more width reaches controls (optional) */
+.strip{ padding:10px; }
+.section{ padding:10px; }
+
+/* If any previous CSS is forcing fixed label widths, this kills it */
+.grid .row label[style]{ width:auto !important; }
   </style>
 </head>
 
