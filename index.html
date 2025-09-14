@@ -67,6 +67,28 @@
       .grid{grid-template-columns:repeat(1,minmax(220px,1fr));}
       .master{grid-template-columns:repeat(1,1fr);}
     }
+    /* === Bigger, more visible meters (channel + master) === */
+
+/* Channel meters inside rows */
+.row .meter{
+  flex: 0 0 18px;    /* fixed column in the row */
+  width: 18px;       /* make it thick like a small fader */
+  height: 140px;     /* taller for clearer movement */
+  border-radius: 8px;
+}
+
+/* Master meter a bit larger */
+#masterMeter.meter{
+  flex: 0 0 22px;
+  width: 22px;
+  height: 160px;
+  border-radius: 10px;
+}
+
+/* Smooth bar rise/fall so it reads clearly */
+.meter .bar{
+  transition: height 60ms linear;
+}
   </style>
 </head>
 <body>
