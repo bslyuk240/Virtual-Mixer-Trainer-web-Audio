@@ -476,7 +476,7 @@ ch.ui.solo.addEventListener('click', ()=>{
 
   window.addEventListener('click', ()=> ctx.resume(), { once:true });
   document.getElementById('year').textContent = new Date().getFullYear();
-    const playAll = document.getElementById('playAll');
+const playAll = document.getElementById('playAll');
 const pauseAll = document.getElementById('pauseAll');
 
 playAll.onclick = () => {
@@ -484,13 +484,11 @@ playAll.onclick = () => {
   ctx.resume();
   for (const ch of Object.values(state.channels)) {
     if (ch.media.src) ch.media.play().catch(()=>{});
-  }
 };
 
 pauseAll.onclick = () => {
   state.transportPlaying = false;
   for (const ch of Object.values(state.channels)) ch.media.pause();
-}
 };
   </script>
 </body>
