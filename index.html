@@ -362,14 +362,22 @@
   }
 
   function updateSoloMute(){
-    const anySolo=Object.values(state.channels).some(ch=>ch.strip.dataset.solo==='1');
-    for(const ch of Object.values(state.channels)){
-      const soloed=ch.strip.dataset.solo==='1';
-      const target=(!anySolo||soloed)?parseFloat(ch.ui.fader.value):0;
-      ch.nodes.postFader.gain.value=target;
-      ch.ui.mute.textContent=target>0?'Mute':'Unmute';
-    }
+  const anySolo = Object.values(state.channels).some(ch => ch.strip.dataset.solo === '1');
+
+  for (const ch of Object.values(state.channels)) {
+    const isSoloed = ch.strip.dataset.solo === '1';
+    const isMuted  = ch.strip.dataset.muted === '1';
+    const faderVal = parseFloat(ch.ui.fader.value);
+
+    // Priority: MUTED → always 0.
+    // If not muted: if any solo is active, only soloed channels play, else all play.
+    const target = isMuted ? 0 : ((anySolo && !isSoloed) ? 0 : faderVal);
+
+    ch.nodes.postFader.gain.value = target;
+    ch.ui.mute.textContent = isMuted ? 'Unmute' : 'Mute';
+    ch.ui.solo.textContent = isSoloed ? 'Unsolo' : 'Solo';
   }
+}
 
   const grid=document.getElementById('grid');
   channelDefs.forEach((def,i)=>{
