@@ -489,6 +489,7 @@ playAll.onclick = () => {
 pauseAll.onclick = () => {
   state.transportPlaying = false;
   for (const ch of Object.values(state.channels)) ch.media.pause();
+ }
 };
   </script>
 </body>
