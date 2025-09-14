@@ -408,9 +408,9 @@ ch.ui.mute.addEventListener('click', ()=>{
 ch.ui.solo.addEventListener('click', ()=>{
   const isSoloed = ch.strip.dataset.solo === '1';
   ch.strip.dataset.solo = isSoloed ? '0' : '1';
-  updateSoloMute();
+  updateSoloMute(); 
 });
-  });
+});
 
   const masterFader=document.getElementById('masterFader');
   const reverbReturnKnob=document.getElementById('reverbReturn');
