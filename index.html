@@ -76,26 +76,84 @@
     .info .note{font-size:13px;color:var(--muted)}
     .info ul{margin:.4rem 0 0 1rem}
     .info li{font-size:13px;color:var(--muted);margin:.25rem 0}
-    /* === Make sliders wider, labels narrower === */
-.row{display:flex; align-items:center; gap:8px;}
+  /* === Compact labels so sliders get the space === */
+.row{display:flex; align-items:center; gap:8px; }
 .row label{
-  width:88px;            /* was ~110–120px */
-  min-width:88px;
-  max-width:100px;
-  font-size:11px;        /* slightly smaller text */
+  width:80px;           /* tighter than before */
+  min-width:80px;
+  font-size:11px;
   color:var(--muted);
 }
-.row input[type="range"]{
-  flex:1;                /* take the remaining space */
-}
+.row input[type="range"]{ flex:1; }
 
-/* File input stays compact so it doesn't steal space */
+/* Keep file input compact */
 .row.inline input[type="file"]{
   max-width:140px;
   white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+/* === Big, flexible sliders (WebKit: Chrome/Edge/Safari) === */
+input[type="range"]{
+  -webkit-appearance:none; appearance:none;
+  height:24px;          /* total control box height */
+  background:transparent;
+  cursor:pointer;
+  margin:4px 0;
+}
+input[type="range"]::-webkit-slider-runnable-track{
+  height:10px;          /* track thickness */
+  background:#0f141b;
+  border:1px solid #2a3645;
+  border-radius:999px;
+}
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none;
+  width:18px; height:18px;     /* knob size */
+  border-radius:50%;
+  background:#2f6fff;          /* same blue as your UI */
+  border:2px solid #1a3c9a;
+  margin-top:-5px;             /* center thumb on 10px track */
+  box-shadow:0 0 0 3px rgba(47,111,255,.15);
+}
+input[type="range"]:hover::-webkit-slider-thumb{
+  box-shadow:0 0 0 5px rgba(47,111,255,.2);
+}
+input[type="range"]:active::-webkit-slider-thumb{
+  transform:scale(1.05);
+}
 
-/* Optional: tighten cards a little so more width reaches sliders */
+/* === Firefox equivalents === */
+input[type="range"]::-moz-range-track{
+  height:10px;
+  background:#0f141b;
+  border:1px solid #2a3645;
+  border-radius:999px;
+}
+input[type="range"]::-moz-range-thumb{
+  width:18px; height:18px;
+  border-radius:50%;
+  background:#2f6fff;
+  border:2px solid #1a3c9a;
+  box-shadow:0 0 0 3px rgba(47,111,255,.15);
+}
+input[type="range"]::-moz-range-progress{
+  height:10px;
+  background:linear-gradient(90deg,#274a87,#2f6fff);
+  border:1px solid #2a3645;
+  border-radius:999px 0 0 999px;
+}
+
+/* Focus ring for accessibility */
+input[type="range"]:focus-visible{
+  outline:none;
+}
+input[type="range"]:focus-visible::-webkit-slider-runnable-track{
+  box-shadow:0 0 0 3px rgba(47,111,255,.25) inset;
+}
+input[type="range"]:focus-visible::-moz-range-track{
+  box-shadow:0 0 0 3px rgba(47,111,255,.25) inset;
+}
+
+/* Optional: tighten cards a bit so more width reaches sliders */
 .strip{padding:10px;}
 .section{padding:10px;}
   </style>
