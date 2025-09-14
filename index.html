@@ -95,26 +95,6 @@
     .row .small{ white-space:nowrap; }
     .row.inline input[type="file"]{ max-width:140px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .grid .row label[style]{ width:auto !important; } /* kill any inline widths */
-    /* === Make sliders noticeably longer === */
-.row{ gap:6px; }  /* a bit tighter row gap */
-
-.row label{
-  flex:0 1 100px;   /* was 128px */
-  max-width:100px;  /* narrower labels → more room for sliders */
-}
-
-/* Each strip a bit wider → longer sliders */
-.grid{
-  grid-template-columns:repeat(7, minmax(220px, 1fr)); /* was 180px */
-  min-width:1360px;  /* was 1200px; keeps one-row layout on wide screens */
-}
-
-/* Send more width to controls */
-.strip{ padding:8px; }    /* was 10px */
-.section{ padding:8px; }  /* was 10px */
-
-/* Keep file input compact so it doesn't steal width */
-.row.inline input[type="file"]{ max-width:100px; }
   </style>
 </head>
 
