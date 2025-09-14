@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Basic -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Virtual Mixer Trainer</title>
@@ -20,7 +19,6 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="./twitter-card.jpg" />
 
-  <!-- Styles (dark UI + mixer only; NO side panel layout, NO top header) -->
   <style>
     :root{
       --bg:#0e1116; --panel:#141a22; --border:#1f2630; --text:#e8eef7;
@@ -32,26 +30,26 @@
     .container{max-width:1200px;margin:0 auto;padding:24px}
     .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
 
-    /* Mixer UI */
+    /* Header (only image + title + transport/scene) */
     header.mixer-head .wrap{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
     header.mixer-head h1{font-size:20px;margin:0 8px 0 0;display:flex;align-items:center;gap:10px}
     .brandmark{width:24px;height:24px;border-radius:6px;border:1px solid var(--border);background:#0f141b;object-fit:contain;display:block}
+
+    /* Controls + inputs */
     .small{font-size:12px;opacity:.8}
     .pill{font-size:12px;border:1px solid var(--border);padding:4px 8px;border-radius:999px}
     label.small{font-size:12px;color:var(--muted)}
     input[type="text"], select{background:#0f141b;border:1px solid #2a3645;color:var(--text);border-radius:10px;padding:8px 10px}
-    input[type="file"]{color:var(--muted)}
+    input[type="file"]{color:var(--muted);max-width:100%}
     input[type="range"]{width:100%}
-    .helper{margin:12px 0}
-    .note{font-size:13px;color:var(--muted)}
-    .section{background:#121822;border:1px solid #1e2b3b;border-radius:12px;padding:12px}
-    .grid{display:grid;gap:12px;grid-template-columns:repeat(7, minmax(150px,1fr))}
-    @media(max-width:1100px){ .grid{grid-template-columns:repeat(3,minmax(160px,1fr))} }
-    @media(max-width:700px){ .grid{grid-template-columns:repeat(1,minmax(220px,1fr))} }
 
-    .strip{background:#101620;border:1px solid #1a2533;border-radius:12px;padding:12px}
+    /* Strips grid — auto wrap, no overlap */
+    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+    .strip{background:#101620;border:1px solid #1a2533;border-radius:12px;padding:12px;min-width:220px;overflow:hidden}
     .strip.disabled{opacity:.45;pointer-events:none}
     .strip h3{margin:.2rem 0 .8rem 0;font-size:14px}
+
+    .section{background:#121822;border:1px solid #1e2b3b;border-radius:12px;padding:12px}
     .row{display:flex;align-items:center;gap:10px;margin:8px 0}
     .row.inline{justify-content:space-between}
     .row label{font-size:12px;color:var(--muted);min-width:120px}
@@ -59,25 +57,25 @@
     .meter{height:110px;width:12px;background:#0a0f15;border:1px solid #1d2a3a;border-radius:6px;position:relative;overflow:hidden}
     .meter .bar{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,#6ad27c,#ffd36a,#ff8b8b);height:0%}
     .kbd{display:inline-block;background:#0f141b;border:1px solid #2a3645;border-radius:6px;padding:1px 6px;font-size:12px}
+
+    /* Master & info area */
     .master{display:grid;gap:12px;grid-template-columns:repeat(3, minmax(220px,1fr))}
     @media(max-width:1100px){ .master{grid-template-columns:1fr} }
-
-    /* Tips block at bottom */
-    .tips{margin-top:16px}
-    .tips h3{margin:.2rem 0 .4rem 0;font-size:14px}
-    .tips ul{margin:.4rem 0 0 1rem}
-    .tips li{font-size:13px;color:var(--muted);margin:.25rem 0}
+    .info{margin-top:12px}
+    .info h3{margin:.2rem 0 .4rem 0;font-size:14px}
+    .info .note{font-size:13px;color:var(--muted)}
+    .info ul{margin:.4rem 0 0 1rem}
+    .info li{font-size:13px;color:var(--muted);margin:.25rem 0}
   </style>
 </head>
 
 <body>
   <div class="container">
 
-    <!-- MAIN MIXER (no site header) -->
     <main class="card">
       <header class="mixer-head">
         <div class="wrap">
-          <!-- 👇 your image branding only -->
+          <!-- Your image branding only -->
           <img class="brandmark" src="./favicon.svg" alt="Logo">
           <h1>Virtual Mixer Trainer <span class="small">v0.2</span></h1>
           <span class="pill">Load stems • Practice live & studio • 🎷 Sax • Demo/Full lock</span>
@@ -99,27 +97,28 @@
         </div>
       </header>
 
-      <div class="helper">
-        <h2 style="margin:.2rem 0 0 0;font-size:16px">How to use</h2>
-        <div class="note">
-          Demo mode: only the first 3 channels are active and scenarios are limited. Enter a valid key to unlock all features.<br>
-          (Training build — for real sales, verify keys on your server.)
-        </div>
-      </div>
-
+      <!-- Channels -->
       <section class="grid" id="grid"></section>
 
+      <!-- Master + Info (How to use moved down here) -->
       <section class="master">
         <div class="card section">
           <h3>Master Bus</h3>
           <div class="row"><label>Master Fader</label><input id="masterFader" type="range" min="0" max="1.5" step="0.01" value="1"></div>
           <div class="row"><label>Reverb Return</label><input id="reverbReturn" type="range" min="0" max="1" step="0.01" value="0.2"></div>
           <div class="row"><label>Master Meter</label><div id="masterMeter" class="meter" aria-label="master meter"><div class="bar"></div></div></div>
-          <div class="row foot"><span class="pill">Tip: Peaks ~ -6 dBFS. Avoid red.</span></div>
+          <div class="row"><span class="pill">Tip: Peaks ~ -6 dBFS. Avoid red.</span></div>
         </div>
-        <div class="card section" style="grid-column:span 6">
-          <h3>Training Notes</h3>
-          <ul class="note">
+
+        <div class="card section info" style="grid-column:span 2">
+          <h3>How to use</h3>
+          <div class="note">
+            Demo mode: only the first 3 channels are active and scenarios are limited. Enter a valid key to unlock all features.<br>
+            (Training build — for real sales, verify keys on your server.)
+          </div>
+
+          <h3 style="margin-top:10px">Training Notes</h3>
+          <ul>
             <li><b>Gain staging:</b> Set <span class="kbd">TRIM</span> first.</li>
             <li><b>HPF:</b> Vocals/Sax start 90–120 Hz.</li>
             <li><b>EQ:</b> Clean muddiness (200–400 Hz); presence (2–5 kHz); air (10–12 kHz).</li>
@@ -132,45 +131,34 @@
       </section>
     </main>
 
-    <!-- TIPS moved to the bottom (no right sidebar) -->
-    <section class="card tips">
-      <h3>Quick Tips</h3>
-      <ul>
-        <li>Start with <strong>TRIM</strong> (gain staging), then <strong>HPF</strong>.</li>
-        <li>EQ: cut muddiness (200–400 Hz), add presence (2–5 kHz), air (10–12 kHz).</li>
-        <li>Pan: Lead center; BGVs L/R; Sax slightly off-center.</li>
-        <li>Live: go lighter on reverb to avoid feedback.</li>
-      </ul>
+    <div class="card info" style="margin-top:16px">
       <h3>Shortcuts</h3>
       <ul>
         <li><strong>Play/Stop</strong> → Space</li>
         <li><strong>Reset channel</strong> → Double-click knob</li>
       </ul>
-    </section>
+    </div>
 
-    <div class="footer">© <span id="year"></span> Virtual Mixer Trainer. All rights reserved.</div>
+    <div style="opacity:.6;font-size:12px;text-align:center;margin-top:12px">© <span id="year"></span> Virtual Mixer Trainer.</div>
   </div>
 
-  <!-- ===== MIXER SCRIPT (unchanged) ===== -->
+  <!-- ===== Script (same engine) ===== -->
   <script>
-  // License
   const LICENSE_KEY = "Bensly-VMIX-2025";
   let isFull = false;
   const licenseInput = document.getElementById('licenseInput');
   const licenseStatus = document.getElementById('licenseStatus');
   document.getElementById('activateBtn').addEventListener('click', ()=>{
-    const val = (licenseInput.value||"").trim();
-    if(val === LICENSE_KEY){ isFull=true; licenseStatus.textContent="FULL"; refreshDemoLocks(); alert("License activated. Full features unlocked."); }
+    const val=(licenseInput.value||"").trim();
+    if(val===LICENSE_KEY){ isFull=true; licenseStatus.textContent="FULL"; refreshDemoLocks(); alert("License activated. Full features unlocked."); }
     else { alert("Invalid key (training build demo)."); }
   });
 
-  // Audio engine
   const ctx = new (window.AudioContext||window.webkitAudioContext)();
   const masterGain = ctx.createGain();
   const analyserMaster = ctx.createAnalyser();
   masterGain.connect(analyserMaster).connect(ctx.destination);
 
-  // Reverb bus
   const convolver = ctx.createConvolver();
   const reverbReturn = ctx.createGain(); reverbReturn.gain.value=0.2;
   convolver.connect(reverbReturn).connect(masterGain);
@@ -193,9 +181,9 @@
   const state = { channels:{} };
 
   function createChannel(def, index){
-    const strip = document.createElement('div');
+    const strip=document.createElement('div');
     strip.className='strip';
-    strip.innerHTML = `
+    strip.innerHTML=`
       <h3>${def.label}</h3>
       <div class="section">
         <div class="row inline"><label>Audio File</label><input type="file" accept="audio/*" data-role="file"></div>
@@ -222,8 +210,8 @@
       </div>
     `;
 
-    const media = new Audio(); media.loop=true; media.crossOrigin='anonymous'; media.preload='auto';
-    const src = ctx.createMediaElementSource(media);
+    const media=new Audio(); media.loop=true; media.crossOrigin='anonymous'; media.preload='auto';
+    const src=ctx.createMediaElementSource(media);
     const preGain=ctx.createGain();
     const hpf=ctx.createBiquadFilter(); hpf.type='highpass'; hpf.frequency.value=100; hpf.Q.value=0.707;
     const eqLow=ctx.createBiquadFilter(); eqLow.type='lowshelf'; eqLow.frequency.value=100;
@@ -346,7 +334,6 @@
     });
   });
 
-  // Master controls & meter
   const masterFader=document.getElementById('masterFader');
   const reverbReturnKnob=document.getElementById('reverbReturn');
   const masterMeter=document.querySelector('#masterMeter .bar');
@@ -361,16 +348,12 @@
   }
   analyserMaster.fftSize=256; drawMaster();
 
-  // Transport
-  document.getElementById('playAll').addEventListener('click', ()=>{
-    ctx.resume();
-    for(const ch of Object.values(state.channels)){ if(ch.media.src) ch.media.play().catch(()=>{}); }
-  });
-  document.getElementById('pauseAll').addEventListener('click', ()=>{
-    for(const ch of Object.values(state.channels)) ch.media.pause();
+  document.getElementById('applyScenario').addEventListener('click', ()=>{
+    const sel=document.getElementById('scenario').value;
+    if(!isFull && sel!=='none'){ alert("Scenarios are limited in demo mode. Activate license to unlock all."); return; }
+    applyScenario(sel);
   });
 
-  // Scenarios
   function applyScenario(name){
     const C=state.channels; const set=(id,fn)=>{ if(C[id]) fn(C[id].ui); };
     if(name==='worship_live'){
@@ -404,11 +387,6 @@
       document.getElementById('reverbReturn').value = 0.22; reverbReturn.gain.value = 0.22;
     }
   }
-  document.getElementById('applyScenario').addEventListener('click', ()=>{
-    const sel=document.getElementById('scenario').value;
-    if(!isFull && sel!=='none'){ alert("Scenarios are limited in demo mode. Activate license to unlock all."); return; }
-    applyScenario(sel);
-  });
 
   function refreshDemoLocks(){
     const strips=Array.from(document.querySelectorAll('.strip'));
@@ -418,17 +396,8 @@
   }
   refreshDemoLocks();
 
-  // Unlock audio on first gesture
   window.addEventListener('click', ()=> ctx.resume(), { once:true });
-
-  // Footer year
   document.getElementById('year').textContent = new Date().getFullYear();
   </script>
-
-  <noscript>
-    <div style="max-width:1200px;margin:16px auto;background:#211616;border:1px solid #3b2323;color:#f1cccc;padding:12px;border-radius:12px">
-      This app requires JavaScript to run. Please enable JavaScript in your browser.
-    </div>
-  </noscript>
 </body>
 </html>
