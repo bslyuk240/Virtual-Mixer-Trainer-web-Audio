@@ -384,17 +384,19 @@
     const strip=createChannel(def,i);
     grid.appendChild(strip);
     const ch=state.channels[def.id];
-    ch.ui.mute.addEventListener('click', ()=>{
-      const muted=ch.nodes.postFader.gain.value>0.0001;
-      ch.nodes.postFader.gain.value=muted?0:parseFloat(ch.ui.fader.value);
-      ch.ui.mute.textContent=muted?'Unmute':'Mute';
-      updateSoloMute();
-    });
-    ch.ui.solo.addEventListener('click', ()=>{
-      ch.strip.dataset.solo=ch.strip.dataset.solo==='1'?'0':'1';
-      ch.ui.solo.textContent=ch.strip.dataset.solo==='1'?'Unsolo':'Solo';
-      updateSoloMute();
-    });
+    // MUTE
+ch.ui.mute.addEventListener('click', ()=>{
+  const isMuted = ch.strip.dataset.muted === '1';
+  ch.strip.dataset.muted = isMuted ? '0' : '1';
+  updateSoloMute();
+});
+
+// SOLO
+ch.ui.solo.addEventListener('click', ()=>{
+  const isSoloed = ch.strip.dataset.solo === '1';
+  ch.strip.dataset.solo = isSoloed ? '0' : '1';
+  updateSoloMute();
+});
   });
 
   const masterFader=document.getElementById('masterFader');
